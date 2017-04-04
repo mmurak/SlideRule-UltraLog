@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>コマンドのサマリ</title>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+<meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+</head>
+<body>
+<div>
+<div style="float:left;"><a href="./commandSummary_E.html">English</a></div>
+<div style="font-style:italic;text-align:right;font-size:80%;">対応ブラウザ：Chrome、Firefox、Opera</div>
+</div>
+
+<hr>
+
+<h2>基本操作</h2>
+<p>
+<strong>カーソルを動かし、固定尺の特定値に合わせる</strong><br/>
+・尺の名称＋［空白］＋固定尺の特定値＋［ENTER］<br/>
+　例：カーソルをD尺の5.75に移動する。→D 575[ENTER]
+</p>
+
+<p>
+<strong>滑尺を動かし、特定値をカーソルに合わせる</strong><br/>
+・尺の名称＋［空白］＋滑尺の特定値＋［ENTER］<br/>
+　例：C尺の2.7をカーソルに合わせる。→C 2.7[ENTER]
+</p>
+
+<p>
+<strong>カーソルを動かし、滑尺の特定値に合わせる</strong><br/>
+・［H］＋尺の名称＋［空白］＋滑尺の特定値＋［ENTER］<br/>
+　例：カーソルをC尺の2.3に合わせる。→HC 23[ENTER]
+</p>
+
+<hr>
+<h2>滑尺の基線まわりの操作</h2>
+
+<p>
+<strong>滑尺を動かし、その左基線をカーソルに合わせる</strong><br/>
+・［LX］＋［ENTER］
+</p>
+
+<p>
+<strong>滑尺を動かし、その右基線をカーソルに合わせる</strong><br/>
+・［RX］＋［ENTER］
+</p>
+
+<p>
+<strong>カーソルを動かし、滑尺の左基線に合わせる</strong><br/>
+・［HLX］＋［ENTER］
+</p>
+
+<p>
+<strong>カーソルを動かし、滑尺の右基線に合わせる</strong><br/>
+・［HRX］＋［ENTER］
+</p>
+
+<hr>
+<h2>固定尺と滑尺の整列操作</h2>
+
+<p>
+<strong>滑尺と固定尺を整列させる（カーソルは固定尺上に保持）</strong><br/>
+・↑
+</p>
+
+<p>
+<strong>滑尺と固定尺を整列させる（カーソルは滑尺上に保持）</strong><br/>
+・↓
+</p>
+
+<hr>
+<h2>便利な操作</h2>
+
+<p>
+<strong>カーソルを動かし、滑尺のいずれか適切な基線に合わせる</strong><br/>
+・［=］<br/>
+　例：$3\div 4$を計算する。→D 3 [ENTER] C 4 [ENTER] [=]
+</p>
+
+<p>
+<strong>目はずれの際に滑尺やカーソルを適切な位置に合わせる</strong><br/>
+・［/］<br/>
+　例：$9\div 7\times 8$を計算する。→D 9 [ENTER] C 7 [ENTER] HC 8 [ENTER] [/]
+</p>
+
+<hr>
+<h2>その他</h2>
+
+<p>
+<strong>表面と裏面の切り替え</strong><br/>
+・［TAB］
+</p>
+
+<p>
+<strong>入力エリアのクリア</strong><br/>
+・［ESC］
+</p>
+
+
+<p>
+<strong>画面の左右スクロール</strong><br/>
+・［←］または［→］<br/>
+（［SHIFT］を押しながら入力すると増分が倍になる）
+</p>
+
+<hr>
+<h2>ゲージマーク</h2>
+
+<table border="1">
+<tr align="center">
+<th>表示</th>
+<th>入力</th>
+<th>値</th>
+<th>説明（使用例）</th>
+</tr>
+<tr>
+<td  align="center">$e$</td>
+<td  align="center">E</td>
+<td>$e=2.7182818$</td>
+<td>自然対数の底（ネイピア数）</td>
+</tr>
+<tr>
+<td  align="center">$\pi$</td>
+<td  align="center">PI</td>
+<td>$\pi=3.1415926$</td>
+<td>円周率</td>
+</tr>
+<tr>
+<td  align="center">$\rho ''$</td>
+<td  align="center">RS</td>
+<td>$\rho ''=\frac{180\times 60\times 60}{\pi}=206264.8$</td>
+<td>秒／ラジアン</td>
+</tr>
+<tr>
+<td  align="center">$\rho '$</td>
+<td  align="center">RM</td>
+<td>$\rho ''=\frac{180\times 60}{\pi}=3437.747$</td>
+<td>分／ラジアン</td>
+</tr>
+<tr>
+<td  align="center">$\rho$</td>
+<td  align="center">R</td>
+<td>$\rho ''=\frac{180}{\pi}=57.29578$</td>
+<td>度／ラジアン</td>
+</tr>
+<tr>
+<td  align="center">$c$</td>
+<td  align="center">C</td>
+<td>$c=299792.5$</td>
+<td>光速度（km/秒）</td>
+</tr>
+<tr>
+<td  align="center">$g$</td>
+<td  align="center">G</td>
+<td>$g=9.806650$</td>
+<td>標準重力定数</td>
+</tr>
+</table>
+
+
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>
+Slide Rule Emulator (UltraLog)
+</title>
+<link rel="shortcut icon" href="./favicon.ico?v=2">
+<script src="./functions.js"></script>
+<script src="./keyCommand.js"></script>
+<script type="text/javascript">
+<!--
+
+// Globals
+var hairlineWidth = 3;
+var borderWidth = 1;
+var canvasHeight = 550;		// should be matched with canvas height in HTML
+var canvasWidth = 900;		// should be matched with canvas width in HTML
+var headerWidth = 99;
+
+// Configuration for scale image
+var labelOffset = 290;		// 400;
+var magnification = 5800;		// 5800;
+var margin = 900;		// 1200;
+var leftOverScale = 240;
+var rightOverScale = 100;
+// -----
+var upperStatorHeight_F = 265;
+var sliderHeight_F = 525;
+var lowerStatorHeight_F = 260;
+// -----
+var upperStatorHeight_R = 265;
+var sliderHeight_R = 525;
+var lowerStatorHeight_R = 260;
+
+// Global work variables
+var interval = 5;		// Timer interval
+var fastForwardPixel = 15;
+var image;
+var imageHeight;
+var imageWidth;
+var upperStatorHeight;
+var sliderHeight;
+var lowerStatorHeight;
+var canvasUpperStatorHeight;
+var canvasSliderHeight;
+var canvasLowerStatorHeight;
+var statorOffset = 0;		// stator offset (X)
+var halfCursor;		// (Canvas width - header width) / 2
+var centreAxisX;	// halfCursor + headerWidth
+var context;
+var timerID;		// timer ID
+var currentStatorPos;
+var currentSliderPos;
+var destStatorPos;
+var destSliderPos;
+var isFront = true;		// current scale (front or rear?)
+var miniSliderElement;
+var miniCursorElement;
+var miniSliderWidth;
+
+// Event handler
+document.onkeyup = KeyCommand;
+window.onfocus = JustFocus;
+
+function Initialize() {
+	document.form.entry.focus();
+	canvas = document.getElementById("canvas0301");
+	if(canvas.getContext) {
+		// set globals
+		context = canvas.getContext("2d");
+		halfCursor =  Math.round((canvasWidth - headerWidth) / 2);
+		centreAxisX = headerWidth + halfCursor;
+		SetPositionGlobalsAndDrawLabel();
+		// set up position variables
+		currentStatorPos = ScaleCD(10);
+		currentSliderPos = ScaleCD(1);
+		destStatorPos = ScaleCD(Math.sqrt(10));
+		destSliderPos = destStatorPos;
+		// set up miniature slide rule information
+		miniSliderElement = document.getElementById("miniatureSRslider"); 
+		miniCursorElement = document.getElementById("miniatureSRcursor"); 
+		miniSliderWidth = miniSliderElement.style.width;
+		miniSliderWidth = miniSliderWidth.replace(/px/, '');
+		// sliding operation
+		SliderOp();
+	}
+}
+
+function SetPositionGlobalsAndDrawLabel() {
+	if (isFront) {
+		image = document.getElementById("scale_front");
+		upperStatorHeight = upperStatorHeight_F;
+		sliderHeight = sliderHeight_F;
+		lowerStatorHeight = lowerStatorHeight_F;
+	} else {
+		image = document.getElementById("scale_rear");
+		upperStatorHeight = upperStatorHeight_R;
+		sliderHeight = sliderHeight_R;
+		lowerStatorHeight = lowerStatorHeight_R;
+	}
+	imageHeight = upperStatorHeight + sliderHeight + lowerStatorHeight;
+	rulerHeight = upperStatorHeight + sliderHeight + lowerStatorHeight;
+	canvasUpperStatorHeight = canvasHeight * upperStatorHeight / rulerHeight;
+	canvasSliderHeight = canvasHeight * sliderHeight / rulerHeight;
+	canvasLowerStatorHeight = canvasHeight * lowerStatorHeight / rulerHeight;
+	// draw label
+	context.drawImage(image,
+		labelOffset, 0,
+		headerWidth, imageHeight,
+		0, 0,
+		headerWidth, canvasHeight);
+}
+
+function DrawPart(position, offsetY, height, canvOffsetY, canvHeight) {
+	screenWidth = canvasWidth - headerWidth;
+	position = position - halfCursor + margin;		// fix to starting position
+	leftBand = margin - leftOverScale - position;
+	rightBand = position + screenWidth -  image.width;
+	if (leftBand > 0) {		// left clip required
+		context.drawImage(image,
+			0, offsetY,
+			1, height,
+			headerWidth, canvOffsetY,
+			Math.min(leftBand, screenWidth), canvHeight);
+		if (leftBand < screenWidth) {
+			context.drawImage(image,
+				position + leftBand, offsetY,
+				canvasWidth - headerWidth - leftBand, height,
+				headerWidth + leftBand, canvOffsetY,
+				canvasWidth - headerWidth - leftBand, canvHeight);
+		}
+	} else if (rightBand > 0) {		// right clip required
+		if (rightBand < screenWidth) {
+			context.drawImage(image,
+				position, offsetY,
+				canvasWidth - headerWidth - rightBand, height,
+				headerWidth, canvOffsetY,
+				canvasWidth - headerWidth - rightBand, canvHeight);
+		}
+		context.drawImage(image,
+			0, offsetY,
+			1, height,
+			canvasWidth - Math.min(rightBand, screenWidth), canvOffsetY,
+			Math.min(rightBand, screenWidth), canvHeight);
+	} else {
+		context.drawImage(image,
+			position, offsetY,
+			canvasWidth - headerWidth, height,
+			headerWidth, canvOffsetY,
+			canvasWidth - headerWidth, canvHeight);
+	}
+	// draw hairline
+	context.strokeStyle = 'rgba(255, 0, 0, 0.5)';	// 'rgb(192, 80, 77)';
+	context.lineWidth = hairlineWidth;
+	context.beginPath();
+	context.moveTo(centreAxisX, canvOffsetY);
+	context.lineTo(centreAxisX, canvOffsetY + canvHeight);
+	context.stroke();
+}
+
+function DrawBorders() {
+	// Draw borders
+	context.strokeStyle = 'rgba(128, 128, 128, 1.0)';
+	context.lineWidth = borderWidth;
+	context.beginPath();
+	// upper border
+	context.moveTo(0, 0);
+	context.lineTo(canvasWidth, 0);
+	context.stroke();
+	// 2nd border
+	context.moveTo(0, canvasUpperStatorHeight);
+	context.lineTo(canvasWidth, canvasUpperStatorHeight);
+	context.stroke();
+	// 3rd border
+	context.moveTo(0, canvasUpperStatorHeight + canvasSliderHeight);
+	context.lineTo(canvasWidth, canvasUpperStatorHeight + canvasSliderHeight);
+	context.stroke();
+	// final border
+	context.moveTo(0, canvasHeight - 1);
+	context.lineTo(canvasWidth, canvasHeight - 1);
+	context.stroke();
+}
+
+function SliderOp() {
+	var tainted = false;
+	var diff;
+	document.form.entry.disabled = "true";
+	document.form.entry.style.backgroundColor = "#ff0000";
+	if (currentStatorPos != destStatorPos) {
+		// Stator operations
+		diff = destStatorPos - currentStatorPos;
+		if (diff < 0) {
+			currentStatorPos -= Math.min(Math.abs(diff), fastForwardPixel);
+		} else {
+			currentStatorPos += Math.min(diff, fastForwardPixel);
+		}
+		DrawPart(currentStatorPos, 0, upperStatorHeight, 0, canvasUpperStatorHeight);
+		DrawPart(currentStatorPos, upperStatorHeight + sliderHeight, lowerStatorHeight,
+			canvasUpperStatorHeight + canvasSliderHeight, canvasLowerStatorHeight);
+		tainted = true;
+	}
+	if (currentSliderPos != destSliderPos) {
+		// Slider operations
+		diff = destSliderPos - currentSliderPos;
+		if (diff < 0) {
+			currentSliderPos -= Math.min(Math.abs(diff), fastForwardPixel);
+		} else {
+			currentSliderPos += Math.min(diff, fastForwardPixel);
+		}
+		DrawPart(currentSliderPos, upperStatorHeight, sliderHeight,
+			canvasUpperStatorHeight, canvasSliderHeight);
+		tainted = true;
+	}
+	// draw hairline and boder, and set up another try if necessary
+	if (tainted) {
+		DrawBorders();
+		SetMiniatureSlider();
+		timerID = setTimeout("SliderOp()", interval);
+	} else {
+		document.form.entry.disabled = "";
+		document.form.entry.style.backgroundColor = "#ffffff";
+		ClearField();
+	}
+}
+
+function FlipScale() {
+	if (isFront) {
+		isFront = false;
+	} else {
+		isFront = true;
+	}
+	SetPositionGlobalsAndDrawLabel();
+	DrawPart(currentStatorPos, 0, upperStatorHeight, 0, canvasUpperStatorHeight);
+	DrawPart(currentStatorPos, upperStatorHeight + sliderHeight, lowerStatorHeight,
+		canvasUpperStatorHeight + canvasSliderHeight, canvasLowerStatorHeight);
+	DrawPart(currentSliderPos, upperStatorHeight, sliderHeight,
+		canvasUpperStatorHeight, canvasSliderHeight);
+	DrawBorders();
+	ClearField();
+}
+
+function SyncSlider() {
+	destSliderPos = destStatorPos - currentStatorPos + currentSliderPos;
+}
+
+function SyncStatorIfNecessary() {
+	if (cursorMode) {
+		destStatorPos = destSliderPos - currentSliderPos + currentStatorPos;
+	}
+}
+
+function ScrollHalfRight() {
+	scrollValue = Math.floor((canvasWidth - headerWidth) * 0.48);
+	destSliderPos += scrollValue;
+	destStatorPos += scrollValue;
+	SliderOp();
+}
+
+function ScrollFullRight() {
+	scrollValue = Math.floor((canvasWidth - headerWidth) * 0.48) * 2;
+	destSliderPos += scrollValue;
+	destStatorPos += scrollValue;
+	SliderOp();
+}
+
+function ScrollHalfLeft() {
+	scrollValue = Math.floor((canvasWidth - headerWidth) * 0.48);
+	destSliderPos -= scrollValue;
+	destStatorPos -= scrollValue;
+	SliderOp();
+}
+
+function ScrollFullLeft() {
+	scrollValue = Math.floor((canvasWidth - headerWidth) * 0.48) * 2
+	destSliderPos -= scrollValue;
+	destStatorPos -= scrollValue;
+	SliderOp();
+}
+
+function ClearField() {
+	document.getElementById('entry').value = ''
+	document.form.entry.focus();
+}
+
+function JustFocus() {
+	document.form.entry.focus();
+}
+
+function SetMiniatureSlider() {
+	var sOffset = Math.floor((currentStatorPos - currentSliderPos) / magnification * miniSliderWidth);
+	var cOffset = Math.floor(currentStatorPos / magnification * miniSliderWidth);
+	miniSliderElement.style.left = sOffset + 'px'; 
+	miniCursorElement.style.left = cOffset + 'px';
+}
+
+function OpenCommandSummary() {
+	window.open('./commandSummary_E.html', 'tips', 'width=610,height=400');
+}
+
+function OpenAcknowledgment() {
+	window.open('./Acknowledgement_E.html', 'tips', 'width=610,height=400');
+}
+
+//-->
+</script>
+
+
+</head>
+
+<body onLoad="javascript:Initialize();">
+
+<div id="controller">
+<form name="form" onsubmit="return false" style="float:left">
+	<input type="text" id="entry" name="entry" autocomplete="off" size="40"/>
+	<input type="button" id="tip" onclick="OpenCommandSummary();" value="Command Summary"/>
+	<input type="button" id="tip" onclick="OpenAcknowledgment();" value="Acknowledgement"/>
+</form>
+<img src="./kiwi-bird.jpg" style="float:right">
+</div>
+
+<div id="miniatureSRcontainar" style="position:relative;top:5px;left:680px;width:120px;height:15px;position:relative;background:gainsboro">
+  <div id="miniatureSRslider" style="position:relative;top:5px;width:120px;height:5px;background-color:mediumaquamarine">
+  </div>
+  <div id="miniatureSRcursor" style="position:relative;top:-5px;width:2px;height:15px;background-color:red">
+  </div>
+</div>
+
+<span style="float:right;font-size:60%;">Zvi Doron's <sup><font color="#FF0000" face="Arial"><em><strong>Ultra</strong></em></font><font face="Arial"><sub><em><strong>Log</strong></em></sub></font></sup></span>
+
+<div class="spacer">
+<canvas id="canvas0301" width=900 height=550 class="shade">
+<p class="bordered">Your browser doesn't seem to support canvas.</p>
+</canvas>
+</div>
+
+<form name="scrollback" style="float:left">
+<input type="button" onclick="ScrollFullLeft()" value="<< (full scroll)" />
+<input type="button" onclick="ScrollHalfLeft()" value="< (half scroll)" />
+</form>
+
+<form name="scrollforward" style="float:right">
+<input type="button" onclick="ScrollHalfRight()" value="(half scroll) >" />
+<input type="button" onclick="ScrollFullRight()" value="(full scroll) >>" />
+</form>
+
+<p>
+<img src="./-UltraLog_f.png" id="scale_front" style="display:none;">
+</p>
+<p>
+<img src="./-UltraLog_r.png" id="scale_rear" style="display:none;">
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Command Summary</title>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+</script>
+<meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+</head>
+<body>
+<div>
+<div style="float:left;"><a href="./commandSummary_J.html">Japanese</a></div>
+<div style="font-style:italic;text-align:right;font-size:80%;">Supported browsers: Chrome, Firefox, Opera</div>
+</div>
+
+<hr>
+
+<h2>Basic Operations</h2>
+<p>
+<strong>Move cursor to specified value on any scale at stator.</strong><br/>
+&gt; Name-of-scale + [SPACE] + Value + [ENTER]<br/>
+&nbsp;&nbsp;&nbsp;E.G.: Move cursor to 5.75 on D. $\rightarrow$ D 575[ENTER]
+</p>
+
+<p>
+<strong>Move slider to set the value on any scale at slider to the cursor.</strong><br/>
+&gt; Name-of-scale + [SPACE] + Value + [ENTER]<br/>
+&nbsp;&nbsp;&nbsp;E.G.: Move slider and 2.7 on C to the cursor. $\rightarrow$ C 2.7[ENTER]
+</p>
+
+<p>
+<strong>Move cursor to specified value on any scale at slider.</strong><br/>
+&gt; [H] + Name-of-scale + [SPACE] + Value + [ENTER]<br/>
+&nbsp;&nbsp;&nbsp;E.G.: Move cursor to 2.3 on C. $\rightarrow$ HC 23[ENTER]
+</p>
+
+<hr>
+<h2>Operations around Slider Indices</h2>
+
+<p>
+<strong>Move slider to set the left index to the cursor.</strong><br/>
+&gt; [LX] + [ENTER]
+</p>
+
+<p>
+<strong>Move slider to set the right index to the cursor.</strong><br/>
+&gt; [RX] + [ENTER]
+</p>
+
+<p>
+<strong>Move cursor to the left index of the slider.</strong><br/>
+&gt; [HLX] + [ENTER]
+</p>
+
+<p>
+<strong>Move cursor to the right index of the slider.</strong><br/>
+&gt; [HRX] + [ENTER]
+</p>
+
+<hr>
+<h2>Alignment Operations</h2>
+
+<p>
+<strong>Align slider with stator (Cursor stays on stator)</strong><br/>
+・$\uparrow$
+</p>
+
+<p>
+<strong>Align stator with slider (Cursor stays on slider)</strong><br/>
+・$\downarrow$
+</p>
+
+<hr>
+<h2>Convenient Operations</h2>
+
+<p>
+<strong>Move cursor to the relevant index of the slider.</strong><br/>
+&gt; [=]<br/>
+&nbsp;&nbsp;&nbsp;E.G.: Calculate $3\div 4$. $\rightarrow$ D 3 [ENTER] C 4 [ENTER] [=]
+</p>
+
+<p>
+<strong>Fix cursor or slider to the relevant position in case of 'Out of Range.'</strong><br/>
+&gt; [/]<br/>
+&nbsp;&nbsp;&nbsp;E.G.: Calculate $9\div 7\times 8$. $\rightarrow$ D 9 [ENTER] C 7 [ENTER] HC 8 [ENTER] [/]
+</p>
+
+<hr>
+<h2>Miscellaneous Operations</h2>
+
+<p>
+<strong>Flip over the slide rule.</strong><br/>
+&gt; [TAB]
+</p>
+
+<p>
+<strong>Clear input area.</strong><br/>
+&gt; [ESC]
+</p>
+
+
+<p>
+<strong>Scroll cursor to left/right.</strong><br/>
+&gt; [$\leftarrow$] or [$\rightarrow$]<br/>
+(You can press [SHIFT] to increase scroll amount.)
+</p>
+
+<hr>
+<h2>Gauge Marks</h2>
+
+<table border="1">
+<tr align="center">
+<th>Display</th>
+<th>Input</th>
+<th>Value</th>
+<th>Description(Usage)</th>
+</tr>
+<tr>
+<td  align="center">$e$</td>
+<td  align="center">E</td>
+<td>$e=2.7182818$</td>
+<td>The base of the natral logarithm(Napier's constant)</td>
+</tr>
+<tr>
+<td  align="center">$\pi$</td>
+<td  align="center">PI</td>
+<td>$\pi=3.1415926$</td>
+<td>The ratio of the circumference of a circle</td>
+</tr>
+<tr>
+<td  align="center">$\rho ''$</td>
+<td  align="center">RS</td>
+<td>$\rho ''=\frac{180\times 60\times 60}{\pi}=206264.8$</td>
+<td>sec/rad</td>
+</tr>
+<tr>
+<td  align="center">$\rho '$</td>
+<td  align="center">RM</td>
+<td>$\rho ''=\frac{180\times 60}{\pi}=3437.747$</td>
+<td>min/rad</td>
+</tr>
+<tr>
+<td  align="center">$\rho$</td>
+<td  align="center">R</td>
+<td>$\rho ''=\frac{180}{\pi}=57.29578$</td>
+<td>deg/rad</td>
+</tr>
+<tr>
+<td  align="center">$c$</td>
+<td  align="center">C</td>
+<td>$c=299792.5$</td>
+<td>Speed of light(km/sec)</td>
+</tr>
+<tr>
+<td  align="center">$g$</td>
+<td  align="center">G</td>
+<td>$g=9.806650$</td>
+<td>Standard gravity.</td>
+</tr>
+</table>
+
+
+</body>
+</html>
