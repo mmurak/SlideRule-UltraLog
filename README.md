@@ -10,3 +10,5 @@ About the slide rule image file:  The scale arrangement of this
 program is an intellectual property of the late Mr. Zvi Doron.
 If you want to use this scale arrangement, you should consult
 his family.
+
+Web page: <a href="https://mmurak.github.io/SlideRule-UltraLog/SlideRule-UltraLog.html">https://mmurak.github.io/SlideRule-UltraLog/SlideRule-UltraLog.html</a>
